@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viral mı Flop mu? - Pazarlama Oyunu</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .container {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  }
+  h1 { font-size: 1.8rem; margin-bottom: 8px; color: #38bdf8; }
+  .subtitle { color: #94a3b8; margin-bottom: 24px; font-size: 0.95rem; }
+  .score { font-size: 1.1rem; margin-bottom: 20px; color: #fbbf24; }
+  .question {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .buttons { display: flex; gap: 12px; justify-content: center; }
+  button {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+  }
+  button:hover { transform: translateY(-2px); }
+  .viral { background: #22c55e; color: white; }
+  .flop { background: #ef4444; color: white; }
+  .viral:hover { background: #16a34a; }
+  .flop:hover { background: #dc2626; }
+  .feedback {
+    margin-top: 20px;
+    font-weight: 600;
+    min-height: 28px;
+  }
+  .correct { color: #4ade80; }
+  .wrong { color: #f87171; }
+  .restart {
+    margin-top: 16px;
+    background: #3b82f6;
+    color: white;
+    display: none;
+  }
+  .restart:hover { background: #2563eb; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Viral mı, Flop mu?</h1>
+  <p class="subtitle">Pazarlama fikirlerini tahmin et!</p>
+  <div class="score">Skor: <span id="score">0</span> / <span id="total">0</span></div>
+  <div class="question" id="question">Yükleniyor...</div>
+  <div class="buttons">
+    <button class="viral" onclick="answer(true)">Viral Olur</button>
+    <button class="flop" onclick="answer(false)">Flop Olur</button>
+  </div>
+  <div class="feedback" id="feedback"></div>
+  <button class="restart" id="restart" onclick="restart()">Yeniden Oyna</button>
+</div>
+
+<script>
+const questions = [
+  { text: "Marka, ünlü biriyle iş birliği yapıp ürününü ücretsiz dağıtıyor.", viral: true },
+  { text: "Şirket, sadece 'kaliteli ürün' yazarak reklam veriyor.", viral: false },
+  { text: "Kullanıcıların kendi videolarını çekip paylaştığı bir challenge başlatılıyor.", viral: true },
+  { text: "Reklamda sadece fiyat ve teknik özellikler var, hikaye yok.", viral: false },
+  { text: "Marka, müşteri şikayetlerini esprili şekilde yanıtlıyor.", viral: true },
+  { text: "Aynı reklamı 3 ay boyunca hiçbir değişiklik yapmadan yayınlıyorlar.", viral: false },
+  { text: "Ürün, TikTok’ta trend olan bir sesle tanıtılıyor.", viral: true },
+  { text: "Reklamda ‘Hemen al’ yazıyor ama neden alması gerektiği anlatılmıyor.", viral: false },
+  { text: "Marka, sürdürülebilirlik hikayesini samimi bir şekilde anlatıyor.", viral: true },
+  { text: "Sadece ‘En iyisi biziz’ diyen genel bir slogan kullanılıyor.", viral: false }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+  if (current >= questions.length) {
+    document.getElementById("question").innerText = "Oyun bitti! 🎉";
+    document.querySelector(".buttons").style.display = "none";
+    document.getElementById("restart").style.display = "inline-block";
+    document.getElementById("feedback").innerText = `Toplam skorun: ${score} / ${questions.length}`;
+    return;
+  }
+  document.getElementById("question").innerText = questions[current].text;
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("total").innerText = questions.length;
+  answered = false;
+}
+
+function answer(userSaysViral) {
+  if (answered || current >= questions.length) return;
+  answered = true;
+  const correct = questions[current].viral === userSaysViral;
+  const fb = document.getElementById("feedback");
+  if (correct) {
+    score++;
+    fb.innerText = "Doğru! 🎯";
+    fb.className = "feedback correct";
+  } else {
+    fb.innerText = "Yanlış 😅";
+    fb.className = "feedback wrong";
+  }
+  document.getElementById("score").innerText = score;
+  current++;
+  setTimeout(loadQuestion, 900);
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  document.getElementById("score").innerText = "0";
+  document.querySelector(".buttons").style.display = "flex";
+  document.getElementById("restart").style.display = "none";
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
